@@ -1,0 +1,249 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Linkora — design system
+   ============================================================ */
+
+@theme {
+  /* Brand palette */
+  --color-brand-50: #f5f3ff;
+  --color-brand-100: #ede9fe;
+  --color-brand-200: #ddd6fe;
+  --color-brand-300: #c4b5fd;
+  --color-brand-400: #a78bfa;
+  --color-brand-500: #8b5cf6;
+  --color-brand-600: #7c3aed;
+  --color-brand-700: #6d28d9;
+  --color-brand-800: #5b21b6;
+  --color-brand-900: #4c1d95;
+
+  --color-accent-400: #f472b6;
+  --color-accent-500: #ec4899;
+  --color-accent-600: #db2777;
+
+  /* Neutral ink scale (app is dark-first) */
+  --color-ink-950: #070711;
+  --color-ink-900: #0b0b16;
+  --color-ink-850: #10101d;
+  --color-ink-800: #16162a;
+  --color-ink-700: #1e1e38;
+  --color-ink-600: #2a2a4a;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Animations */
+  --animate-aurora: aurora 18s ease-in-out infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.4s linear infinite;
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-in: fade-in 0.6s ease both;
+  --animate-scale-in: scale-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes aurora {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.85;
+  }
+  33% {
+    transform: translate3d(4%, -6%, 0) scale(1.15);
+    opacity: 1;
+  }
+  66% {
+    transform: translate3d(-5%, 4%, 0) scale(0.95);
+    opacity: 0.7;
+  }
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  border-color: color-mix(in oklab, white 8%, transparent);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-ink-950);
+  color: #e8e8f0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-brand-500) 45%, transparent);
+  color: #fff;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--color-brand-500) 40%, var(--color-ink-700));
+  border-radius: 999px;
+  border: 2px solid var(--color-ink-950);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-500);
+}
+
+/* ============================================================
+   Utilities / components
+   ============================================================ */
+
+@layer utilities {
+  .gradient-text {
+    background-image: linear-gradient(
+      100deg,
+      var(--color-brand-300),
+      var(--color-brand-500) 40%,
+      var(--color-accent-500)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .brand-gradient {
+    background-image: linear-gradient(
+      100deg,
+      var(--color-brand-600),
+      var(--color-brand-500) 45%,
+      var(--color-accent-500)
+    );
+  }
+
+  .glass {
+    background: color-mix(in oklab, white 5%, transparent);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid color-mix(in oklab, white 10%, transparent);
+  }
+
+  .glass-strong {
+    background: color-mix(in oklab, var(--color-ink-850) 78%, transparent);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid color-mix(in oklab, white 9%, transparent);
+  }
+
+  /* Faint dotted grid backdrop */
+  .grid-bg {
+    background-image: radial-gradient(
+      color-mix(in oklab, white 8%, transparent) 1px,
+      transparent 1px
+    );
+    background-size: 26px 26px;
+  }
+
+  .glow {
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-brand-500) 30%, transparent),
+      0 12px 40px -12px color-mix(in oklab, var(--color-brand-500) 55%, transparent);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      110deg,
+      transparent 30%,
+      color-mix(in oklab, white 22%, transparent) 50%,
+      transparent 70%
+    );
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+  }
+
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
