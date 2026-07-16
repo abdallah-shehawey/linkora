@@ -11,7 +11,7 @@ export const DEMO_PROFILE: Profile = {
     encodeURIComponent(
       `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>
         <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
-        <stop offset='0' stop-color='#c4b5fd'/><stop offset='1' stop-color='#f472b6'/>
+        <stop offset='0' stop-color='#67e8f9'/><stop offset='1' stop-color='#0ea5e9'/>
         </linearGradient></defs>
         <rect width='200' height='200' fill='url(#g)'/>
         <text x='50%' y='54%' font-family='sans-serif' font-size='84' font-weight='700'

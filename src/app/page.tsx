@@ -107,7 +107,7 @@ export default function Home() {
 
               <div className="mt-8 flex items-center gap-4">
                 <div className="flex -space-x-2">
-                  {["#7c3aed", "#ec4899", "#0ea5e9", "#f97316", "#22c55e"].map(
+                  {["#0891b2", "#0ea5e9", "#06b6d4", "#22d3ee", "#67e8f9"].map(
                     (c) => (
                       <span
                         key={c}
