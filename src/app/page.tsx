@@ -15,10 +15,12 @@ import { Navbar } from "@/components/marketing/navbar";
 import { AuroraBg } from "@/components/marketing/aurora-bg";
 import { ClaimHandle } from "@/components/marketing/claim-handle";
 import { ThemeShowcase } from "@/components/marketing/theme-showcase";
+import { LiveStats, CreatorsLine } from "@/components/marketing/live-stats";
 import { PhoneMockup } from "@/components/phone-mockup";
 import { ProfileView } from "@/components/profile-view";
 import { Logo } from "@/components/logo";
 import { DEMO_PROFILE } from "@/lib/demo";
+import { SITE_HOST } from "@/lib/site";
 
 const FEATURES = [
   {
@@ -44,7 +46,7 @@ const FEATURES = [
   {
     icon: Globe,
     title: "Your own handle",
-    body: "Claim linkora.app/you. One clean link for every bio, everywhere.",
+    body: `Claim ${SITE_HOST}/you. One clean link for every bio, everywhere.`,
   },
   {
     icon: ShieldCheck,
@@ -78,14 +80,14 @@ export default function Home() {
       <section className="relative overflow-hidden pt-36 pb-20 sm:pt-44">
         <AuroraBg />
         <div className="mx-auto max-w-6xl px-4">
-          <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="animate-fade-up">
+          <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+            <div className="animate-fade-up min-w-0">
               <span className="glass inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium text-white/70">
                 <Sparkles className="h-3.5 w-3.5 text-brand-300" />
                 The modern link-in-bio · now in beta
               </span>
 
-              <h1 className="mt-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl">
+              <h1 className="mt-6 text-balance text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl">
                 One link for{" "}
                 <span className="gradient-text">everything</span> you are.
               </h1>
@@ -115,14 +117,11 @@ export default function Home() {
                     ),
                   )}
                 </div>
-                <p className="text-sm text-white/50">
-                  <span className="font-semibold text-white">2,000+</span>{" "}
-                  creators already building
-                </p>
+                <CreatorsLine />
               </div>
             </div>
 
-            <div className="animate-scale-in flex justify-center">
+            <div className="animate-scale-in flex min-w-0 justify-center">
               <div className="relative">
                 <div className="absolute -inset-6 -z-10 rounded-full bg-brand-600/20 blur-3xl" />
                 <PhoneMockup className="animate-float">
@@ -134,24 +133,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ============================ STATS ============================ */}
-      <section className="border-y border-white/5 bg-white/[0.015]">
-        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-8 px-4 py-12 sm:grid-cols-4">
-          {[
-            { k: "2,000+", v: "Creators" },
-            { k: "10", v: "Themes" },
-            { k: "1.4M", v: "Link clicks" },
-            { k: "< 1s", v: "Page load" },
-          ].map((s) => (
-            <div key={s.v} className="text-center">
-              <div className="text-3xl font-bold text-white sm:text-4xl">
-                {s.k}
-              </div>
-              <div className="mt-1 text-sm text-white/45">{s.v}</div>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* ============================ STATS (live) ============================ */}
+      <LiveStats />
 
       {/* ============================ FEATURES ============================ */}
       <section id="features" className="relative py-24">
@@ -207,23 +190,25 @@ export default function Home() {
             subtitle="We kept what works about the others — and fixed what doesn't."
           />
           <div className="mt-12 overflow-hidden rounded-3xl border border-white/10">
-            <div className="grid grid-cols-[1fr_auto_auto] items-center gap-4 border-b border-white/10 bg-white/[0.03] px-6 py-4 text-sm font-semibold">
+            <div className="grid grid-cols-[1fr_auto_auto] items-center gap-2 border-b border-white/10 bg-white/[0.03] px-4 py-4 text-sm font-semibold sm:gap-4 sm:px-6">
               <span className="text-white/50">Feature</span>
-              <span className="flex w-20 justify-center text-white">
+              <span className="flex w-12 justify-center text-white sm:w-20">
                 <Logo showText={false} />
               </span>
-              <span className="w-20 text-center text-white/40">Others</span>
+              <span className="w-12 text-center text-white/40 sm:w-20">
+                Others
+              </span>
             </div>
             {COMPARE.map((row) => (
               <div
                 key={row.label}
-                className="grid grid-cols-[1fr_auto_auto] items-center gap-4 border-b border-white/5 px-6 py-4 text-sm last:border-0"
+                className="grid grid-cols-[1fr_auto_auto] items-center gap-2 border-b border-white/5 px-4 py-4 text-sm last:border-0 sm:gap-4 sm:px-6"
               >
                 <span className="text-white/80">{row.label}</span>
-                <span className="flex w-20 justify-center">
+                <span className="flex w-12 justify-center sm:w-20">
                   <Badge ok={row.us} />
                 </span>
-                <span className="flex w-20 justify-center">
+                <span className="flex w-12 justify-center sm:w-20">
                   <Badge ok={row.them} />
                 </span>
               </div>

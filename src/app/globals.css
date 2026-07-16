@@ -134,6 +134,8 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* Decorative blobs/marquees must never cause sideways scroll on phones. */
+  overflow-x: clip;
 }
 
 ::selection {

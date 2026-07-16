@@ -5,7 +5,7 @@ import { BadgeCheck } from "lucide-react";
 import type { Profile } from "@/lib/types";
 import { getTheme, BUTTON_STYLES } from "@/lib/themes";
 import { cn, initialsOf, normaliseUrl } from "@/lib/utils";
-import { SOCIALS, socialHref } from "./social-icons";
+import { SOCIALS, socialHref, socialDisplayName } from "./social-icons";
 import { LogoMark } from "./logo";
 
 interface ProfileViewProps {
@@ -101,9 +101,9 @@ export function ProfileView({
           </p>
         )}
 
-        {/* Socials */}
+        {/* Socials — vertical rows: icon + account name */}
         {profile.socials.length > 0 && (
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-1">
+          <div className="mt-6 flex w-full flex-col gap-2.5">
             {profile.socials.map((s, i) => {
               const meta = SOCIALS[s.platform];
               if (!meta || !s.url) return null;
@@ -115,11 +115,38 @@ export function ProfileView({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => preview && e.preventDefault()}
-                  aria-label={meta.label}
-                  className="flex h-10 w-10 items-center justify-center rounded-full transition-transform hover:scale-110"
-                  style={{ color: "var(--social-fg)" }}
+                  aria-label={`${meta.label}: ${socialDisplayName(s)}`}
+                  className={cn(
+                    "flex w-full items-center gap-3 px-4 py-3 transition-all duration-200 hover:-translate-y-0.5",
+                    extraClass,
+                  )}
+                  style={{
+                    borderRadius: style.radius,
+                    background: outline ? "transparent" : "var(--btn-bg)",
+                    color: "var(--btn-fg)",
+                    borderWidth: outline ? 1.5 : style.extra === "hard" ? 2 : 1,
+                    borderStyle: "solid",
+                    borderColor: "var(--btn-border)",
+                  }}
                 >
-                  <Icon className="h-5 w-5" />
+                  <span
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                    style={{
+                      background:
+                        "color-mix(in oklab, var(--btn-fg) 10%, transparent)",
+                      color: "var(--social-fg)",
+                    }}
+                  >
+                    <Icon className="h-[18px] w-[18px]" />
+                  </span>
+                  <span className="min-w-0 flex-1 text-left">
+                    <span className="block truncate text-sm font-semibold">
+                      {socialDisplayName(s)}
+                    </span>
+                    <span className="block truncate text-xs opacity-60">
+                      {meta.label}
+                    </span>
+                  </span>
                 </a>
               );
             })}

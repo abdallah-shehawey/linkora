@@ -1,11 +1,15 @@
 import {
   doc,
+  collection,
   getDoc,
   setDoc,
   updateDoc,
   runTransaction,
   serverTimestamp,
   increment,
+  onSnapshot,
+  getCountFromServer,
+  type Unsubscribe,
 } from "firebase/firestore";
 import { getDb } from "./firebase";
 import type { Profile } from "./types";
@@ -28,6 +32,39 @@ function usernameRef(username: string) {
 }
 function statsRef(uid: string) {
   return doc(getDb(), STATS, uid);
+}
+
+/** Site-wide aggregate counters live in a reserved doc of the stats collection. */
+const SITE_STATS_ID = "_site";
+
+export interface SiteStats {
+  totalViews: number;
+  totalClicks: number;
+}
+
+function siteStatsRef() {
+  return doc(getDb(), STATS, SITE_STATS_ID);
+}
+
+/** Live subscription to the site-wide counters (landing-page stats strip). */
+export function watchSiteStats(cb: (stats: SiteStats) => void): Unsubscribe {
+  return onSnapshot(
+    siteStatsRef(),
+    (snap) => {
+      const data = (snap.data() ?? {}) as Partial<SiteStats>;
+      cb({
+        totalViews: data.totalViews ?? 0,
+        totalClicks: data.totalClicks ?? 0,
+      });
+    },
+    () => cb({ totalViews: 0, totalClicks: 0 }),
+  );
+}
+
+/** Number of claimed profiles — powers the "Creators" stat. */
+export async function countCreators(): Promise<number> {
+  const snap = await getCountFromServer(collection(getDb(), PROFILES));
+  return snap.data().count;
 }
 
 export async function getProfileByUid(uid: string): Promise<Profile | null> {
@@ -118,7 +155,10 @@ export async function getStats(uid: string): Promise<Stats> {
 /** Public: bump the page view counter. Best-effort, never throws. */
 export async function recordView(uid: string): Promise<void> {
   try {
-    await setDoc(statsRef(uid), { views: increment(1) }, { merge: true });
+    await Promise.all([
+      setDoc(statsRef(uid), { views: increment(1) }, { merge: true }),
+      setDoc(siteStatsRef(), { totalViews: increment(1) }, { merge: true }),
+    ]);
   } catch {
     /* analytics is best-effort */
   }
@@ -126,6 +166,11 @@ export async function recordView(uid: string): Promise<void> {
 
 /** Public: bump a link click counter. Best-effort, never throws. */
 export async function recordClick(uid: string, linkId: string): Promise<void> {
+  void setDoc(
+    siteStatsRef(),
+    { totalClicks: increment(1) },
+    { merge: true },
+  ).catch(() => {});
   try {
     await updateDoc(statsRef(uid), { [`clicks.${linkId}`]: increment(1) });
   } catch {

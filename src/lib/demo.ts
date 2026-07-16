@@ -23,10 +23,9 @@ export const DEMO_PROFILE: Profile = {
   verified: true,
   views: 12840,
   socials: [
-    { platform: "instagram", url: "instagram.com/layla" },
-    { platform: "tiktok", url: "tiktok.com/@layla" },
-    { platform: "youtube", url: "youtube.com/@layla" },
-    { platform: "spotify", url: "open.spotify.com/layla" },
+    { platform: "instagram", url: "instagram.com/layla", label: "layla.creates" },
+    { platform: "youtube", url: "youtube.com/@layla", label: "Layla Hassan" },
+    { platform: "tiktok", url: "tiktok.com/@layla", label: "@layla" },
   ],
   links: [
     { id: "l1", title: "✦ Shop my new collection", url: "#", active: true, clicks: 0, highlight: true },

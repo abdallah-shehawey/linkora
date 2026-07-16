@@ -10,8 +10,6 @@ import type { SocialPlatform } from "@/lib/types";
 export function SocialsEditor() {
   const { profile, addSocial, updateSocial, removeSocial } = useEditor();
   const [picking, setPicking] = useState(false);
-  const used = new Set(profile.socials.map((s) => s.platform));
-  const available = SOCIAL_PLATFORMS.filter((p) => !used.has(p));
 
   return (
     <div className="space-y-3">
@@ -26,14 +24,23 @@ export function SocialsEditor() {
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/6 text-white/80">
               <Icon className="h-[18px] w-[18px]" />
             </span>
-            <Input
-              value={s.url}
-              onChange={(e) => updateSocial(i, { url: e.target.value })}
-              placeholder={meta.placeholder}
-              className="h-9 border-0 bg-transparent px-1 focus:ring-0"
-              autoCapitalize="none"
-              spellCheck={false}
-            />
+            <div className="flex min-w-0 flex-1 flex-col">
+              <Input
+                value={s.label ?? ""}
+                onChange={(e) => updateSocial(i, { label: e.target.value })}
+                placeholder={`Account name (e.g. shown as "${meta.label}")`}
+                className="h-8 border-0 bg-transparent px-1 text-sm focus:ring-0"
+                spellCheck={false}
+              />
+              <Input
+                value={s.url}
+                onChange={(e) => updateSocial(i, { url: e.target.value })}
+                placeholder={meta.placeholder}
+                className="h-8 border-0 bg-transparent px-1 text-xs text-white/60 focus:ring-0"
+                autoCapitalize="none"
+                spellCheck={false}
+              />
+            </div>
             <button
               onClick={() => removeSocial(i)}
               className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white/30 hover:bg-red-500/10 hover:text-red-400"
@@ -45,18 +52,18 @@ export function SocialsEditor() {
         );
       })}
 
-      {available.length > 0 && (
-        <div className="relative">
-          <button
-            onClick={() => setPicking((v) => !v)}
-            className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-white/12 py-3 text-sm text-white/60 hover:bg-white/5 hover:text-white"
-          >
-            <Plus className="h-4 w-4" />
-            Add social icon
-          </button>
-          {picking && (
-            <div className="glass-strong absolute inset-x-0 top-full z-20 mt-1 grid grid-cols-4 gap-1 rounded-xl p-2">
-              {available.map((p) => {
+      <div className="relative">
+        <button
+          onClick={() => setPicking((v) => !v)}
+          className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-white/12 py-3 text-sm text-white/60 hover:bg-white/5 hover:text-white"
+        >
+          <Plus className="h-4 w-4" />
+          Add account
+        </button>
+        {picking && (
+          <div className="glass-strong absolute inset-x-0 top-full z-20 mt-1 rounded-xl p-2">
+            <div className="grid grid-cols-4 gap-1">
+              {SOCIAL_PLATFORMS.map((p) => {
                 const meta = SOCIALS[p as SocialPlatform];
                 const Icon = meta.Icon;
                 return (
@@ -74,9 +81,12 @@ export function SocialsEditor() {
                 );
               })}
             </div>
-          )}
-        </div>
-      )}
+            <p className="mt-1.5 px-1 text-center text-[10px] text-white/35">
+              You can add the same platform more than once.
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

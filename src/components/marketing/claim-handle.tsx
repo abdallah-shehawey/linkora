@@ -4,9 +4,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { slugifyUsername } from "@/lib/utils";
+import { useSiteHost } from "@/lib/use-site-host";
 
 export function ClaimHandle({ size = "lg" }: { size?: "lg" | "sm" }) {
   const router = useRouter();
+  const host = useSiteHost();
   const [value, setValue] = useState("");
 
   const go = () => {
@@ -27,9 +29,9 @@ export function ClaimHandle({ size = "lg" }: { size?: "lg" | "sm" }) {
       }`}
     >
       <span
-        className={`pl-3 font-medium text-white/40 ${big ? "text-base" : "text-sm"}`}
+        className={`pl-3 font-medium text-white/40 max-[380px]:hidden ${big ? "text-xs sm:text-base" : "text-xs sm:text-sm"}`}
       >
-        linkora.app/
+        {host}/
       </span>
       <input
         value={value}
@@ -39,7 +41,8 @@ export function ClaimHandle({ size = "lg" }: { size?: "lg" | "sm" }) {
         autoCapitalize="none"
         autoCorrect="off"
         spellCheck={false}
-        className={`min-w-0 flex-1 bg-transparent font-medium text-white outline-none placeholder:text-white/30 ${
+        size={1}
+        className={`w-0 min-w-0 flex-1 bg-transparent font-medium text-white outline-none placeholder:text-white/30 ${
           big ? "text-base" : "text-sm"
         }`}
       />

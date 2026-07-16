@@ -13,7 +13,7 @@ import {
   FaEnvelope,
   FaGlobe,
 } from "react-icons/fa6";
-import type { SocialPlatform } from "@/lib/types";
+import type { SocialLink, SocialPlatform } from "@/lib/types";
 import { normaliseUrl } from "@/lib/utils";
 
 export const SOCIALS: Record<
@@ -43,4 +43,29 @@ export function socialHref(platform: SocialPlatform, value: string): string {
     return v.startsWith("mailto:") ? v : `mailto:${v}`;
   }
   return normaliseUrl(v);
+}
+
+/**
+ * Name shown next to the icon on the public page: the user-provided label
+ * when present, otherwise the handle extracted from the URL, otherwise the
+ * platform name.
+ */
+export function socialDisplayName(s: SocialLink): string {
+  const label = s.label?.trim();
+  if (label) return label;
+
+  const meta = SOCIALS[s.platform];
+  const raw = s.url.trim();
+  if (!raw) return meta.label;
+  if (s.platform === "email") return raw.replace(/^mailto:/i, "");
+
+  try {
+    const url = new URL(normaliseUrl(raw));
+    if (s.platform === "website") return url.host.replace(/^www\./, "");
+    const segment = url.pathname.split("/").filter(Boolean).pop();
+    if (segment) return decodeURIComponent(segment).replace(/^@/, "");
+    return url.host.replace(/^www\./, "");
+  } catch {
+    return meta.label;
+  }
 }

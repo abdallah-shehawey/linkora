@@ -15,6 +15,8 @@ export type SocialPlatform =
 export interface SocialLink {
   platform: SocialPlatform;
   url: string;
+  /** Display name shown next to the icon; falls back to the handle in the URL. */
+  label?: string;
 }
 
 export interface LinkItem {

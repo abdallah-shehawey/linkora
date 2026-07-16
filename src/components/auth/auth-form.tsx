@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -32,7 +32,8 @@ function GoogleIcon() {
 }
 
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
-  const { signInEmail, signUpEmail, signInGoogle } = useAuth();
+  const { user, profile, loading, signInEmail, signUpEmail, signInGoogle } =
+    useAuth();
   const router = useRouter();
   const params = useSearchParams();
   const presetUsername = params.get("u") ?? "";
@@ -41,6 +42,14 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState<"email" | "google" | null>(null);
+
+  // Already signed in (persisted session)? Skip the form entirely.
+  // `busy` guards the in-flight flows, which navigate themselves and may
+  // need to keep the ?u= preset.
+  useEffect(() => {
+    if (loading || busy || !user) return;
+    router.replace(profile ? "/dashboard" : "/onboarding");
+  }, [loading, busy, user, profile, router]);
 
   const isSignup = mode === "signup";
   const afterAuth = isSignup

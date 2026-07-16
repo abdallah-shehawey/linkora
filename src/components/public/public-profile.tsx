@@ -7,6 +7,7 @@ import { ProfileView } from "@/components/profile-view";
 import { Logo } from "@/components/logo";
 import { getProfileByUsername, recordView, recordClick } from "@/lib/db";
 import { isFirebaseConfigured } from "@/lib/firebase";
+import { useSiteHost } from "@/lib/use-site-host";
 import type { Profile } from "@/lib/types";
 
 type State =
@@ -56,16 +57,16 @@ export function PublicProfile({ username }: { username: string }) {
 
   const { profile } = state;
   return (
-    <div className="min-h-dvh">
-      <ProfileView
-        profile={profile}
-        onLinkClick={(id) => void recordClick(profile.uid, id)}
-      />
-    </div>
+    <ProfileView
+      profile={profile}
+      className="min-h-dvh"
+      onLinkClick={(id) => void recordClick(profile.uid, id)}
+    />
   );
 }
 
 function NotFoundCard({ username }: { username: string }) {
+  const host = useSiteHost();
   return (
     <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-4 text-center">
       <div className="pointer-events-none absolute -top-32 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-brand-600/20 blur-[120px]" />
@@ -81,7 +82,7 @@ function NotFoundCard({ username }: { username: string }) {
         href={`/signup?u=${encodeURIComponent(username)}`}
         className="brand-gradient mt-7 inline-flex h-12 items-center gap-2 rounded-xl px-6 font-semibold text-white shadow-lg shadow-brand-600/30 transition-transform hover:-translate-y-0.5"
       >
-        Claim linkora.app/{username}
+        Claim {host}/{username}
         <ArrowRight className="h-4 w-4" />
       </Link>
       <Link href="/" className="mt-10 opacity-60 transition-opacity hover:opacity-100">

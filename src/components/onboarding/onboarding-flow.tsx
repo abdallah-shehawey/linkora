@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth-context";
 import { isUsernameAvailable, reserveAndCreateProfile } from "@/lib/db";
 import { emptyProfile } from "@/lib/types";
 import { slugifyUsername, USERNAME_RE, RESERVED_USERNAMES } from "@/lib/utils";
+import { useSiteHost } from "@/lib/use-site-host";
 
 type Status = "idle" | "checking" | "available" | "taken" | "invalid";
 
@@ -17,6 +18,7 @@ export function OnboardingFlow() {
   const { user, refreshProfile } = useAuth();
   const router = useRouter();
   const params = useSearchParams();
+  const host = useSiteHost();
 
   const [username, setUsername] = useState(() =>
     slugifyUsername(params.get("u") ?? ""),
@@ -98,21 +100,22 @@ export function OnboardingFlow() {
       <form onSubmit={submit} className="mt-6 space-y-5">
         <div>
           <Field label="Username">
-            <div className="relative">
-              <span className="pointer-events-none absolute left-3.5 top-1/2 flex -translate-y-1/2 items-center text-sm text-white/40">
+            <div className="flex h-11 items-center rounded-xl border border-white/10 bg-white/5 pr-3.5 transition-colors focus-within:border-brand-400/60 focus-within:bg-white/8 focus-within:ring-2 focus-within:ring-brand-400/20">
+              <span className="flex shrink-0 items-center pl-3.5 text-xs text-white/40 sm:text-sm">
                 <AtSign className="mr-1 h-3.5 w-3.5" />
-                linkora.app/
+                {host}/
               </span>
-              <Input
+              <input
                 value={username}
                 onChange={(e) => setUsername(slugifyUsername(e.target.value))}
-                className="pr-10 pl-[7.5rem]"
+                size={1}
+                className="h-full w-0 min-w-0 flex-1 bg-transparent px-1 text-sm text-white outline-none placeholder:text-white/30"
                 placeholder="yourname"
                 autoCapitalize="none"
                 spellCheck={false}
                 autoFocus
               />
-              <span className="absolute right-3.5 top-1/2 -translate-y-1/2">
+              <span className="shrink-0">
                 <StatusIcon status={status} />
               </span>
             </div>

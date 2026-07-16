@@ -3,18 +3,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Check, Loader2, LogOut, X } from "lucide-react";
-import { Input, Field } from "@/components/ui/input";
+import { Field } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEditor } from "./editor-context";
 import { useAuth } from "@/lib/auth-context";
 import { changeUsername, isUsernameAvailable } from "@/lib/db";
 import { slugifyUsername, USERNAME_RE, RESERVED_USERNAMES } from "@/lib/utils";
+import { siteHost } from "@/lib/site";
+import { useSiteHost } from "@/lib/use-site-host";
 
 type Status = "idle" | "checking" | "available" | "taken" | "invalid";
 
 export function SettingsEditor() {
   const { profile, patch } = useEditor();
   const { user, signOut, refreshProfile } = useAuth();
+  const host = useSiteHost();
   const [draft, setDraft] = useState(profile.username);
   // Result of the last async availability check, keyed by the handle checked.
   const [checked, setChecked] = useState<{ name: string; ok: boolean } | null>(
@@ -67,7 +70,7 @@ export function SettingsEditor() {
       // patch() makes `changed` false, so the derived status returns to idle.
       patch({ username: draft });
       await refreshProfile();
-      toast.success(`You're now linkora.app/${draft}`);
+      toast.success(`You're now ${siteHost()}/${draft}`);
     } catch (err) {
       const taken = err instanceof Error && err.message === "username-taken";
       toast.error(taken ? "That handle is taken." : "Couldn't change handle.");
@@ -85,18 +88,19 @@ export function SettingsEditor() {
           Changing this updates your public URL.
         </p>
         <Field label="Username">
-          <div className="relative">
-            <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-white/40">
-              linkora.app/
+          <div className="flex h-11 items-center rounded-xl border border-white/10 bg-white/5 pr-3.5 transition-colors focus-within:border-brand-400/60 focus-within:bg-white/8 focus-within:ring-2 focus-within:ring-brand-400/20">
+            <span className="shrink-0 pl-3.5 text-xs text-white/40 sm:text-sm">
+              {host}/
             </span>
-            <Input
+            <input
               value={draft}
               onChange={(e) => setDraft(slugifyUsername(e.target.value))}
-              className="pl-[6.7rem] pr-10"
+              size={1}
+              className="h-full w-0 min-w-0 flex-1 bg-transparent px-1 text-sm text-white outline-none placeholder:text-white/30"
               autoCapitalize="none"
               spellCheck={false}
             />
-            <span className="absolute right-3.5 top-1/2 -translate-y-1/2">
+            <span className="shrink-0">
               {status === "checking" && (
                 <Loader2 className="h-4 w-4 animate-spin text-white/40" />
               )}

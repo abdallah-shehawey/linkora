@@ -116,11 +116,12 @@ export function EditorProvider({
     setProfile((p) => ({ ...p, links }));
   }, []);
 
+  // The same platform can be added any number of times (multiple accounts).
   const addSocial = useCallback((platform: SocialPlatform) => {
-    setProfile((p) => {
-      if (p.socials.some((s) => s.platform === platform)) return p;
-      return { ...p, socials: [...p.socials, { platform, url: "" }] };
-    });
+    setProfile((p) => ({
+      ...p,
+      socials: [...p.socials, { platform, url: "", label: "" }],
+    }));
   }, []);
 
   const updateSocial = useCallback((index: number, data: Partial<SocialLink>) => {

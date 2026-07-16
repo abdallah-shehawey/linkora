@@ -1,6 +1,10 @@
 import { getApps, getApp, initializeApp, type FirebaseApp } from "firebase/app";
 import {
   getAuth,
+  initializeAuth,
+  indexedDBLocalPersistence,
+  browserLocalPersistence,
+  browserPopupRedirectResolver,
   connectAuthEmulator,
   type Auth,
   GoogleAuthProvider,
@@ -50,7 +54,19 @@ function ensureApp(): FirebaseApp {
 
 export function getFirebaseAuth(): Auth {
   if (!authInstance) {
-    authInstance = getAuth(ensureApp());
+    const app = ensureApp();
+    try {
+      // Explicit durable persistence (IndexedDB, then localStorage) so a
+      // login survives closing the browser; unavailable layers are skipped
+      // automatically (e.g. in Node during e2e tests).
+      authInstance = initializeAuth(app, {
+        persistence: [indexedDBLocalPersistence, browserLocalPersistence],
+        popupRedirectResolver: browserPopupRedirectResolver,
+      });
+    } catch {
+      // Auth was already initialised for this app — reuse it.
+      authInstance = getAuth(app);
+    }
     if (useEmulator) {
       connectAuthEmulator(authInstance, "http://127.0.0.1:9099", {
         disableWarnings: true,

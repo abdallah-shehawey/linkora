@@ -5,17 +5,17 @@ import { Copy, Check, ExternalLink, RefreshCw } from "lucide-react";
 import { useEditor } from "./editor-context";
 import { PhoneMockup } from "@/components/phone-mockup";
 import { ProfileView } from "@/components/profile-view";
+import { siteOrigin } from "@/lib/site";
+import { useSiteHost } from "@/lib/use-site-host";
 
 export function LivePreview() {
   const { profile } = useEditor();
+  const host = useSiteHost();
   const [copied, setCopied] = useState(false);
   const [nonce, setNonce] = useState(0);
 
   const path = `/${profile.username}`;
-  const shareUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}${path}`
-      : `linkora.app${path}`;
+  const shareUrl = `${siteOrigin()}${path}`;
 
   const copy = async () => {
     try {
@@ -41,7 +41,7 @@ export function LivePreview() {
             <Copy className="h-4 w-4 shrink-0 text-white/40" />
           )}
           <span className="truncate text-white/70">
-            linkora.app/{profile.username}
+            {host}/{profile.username}
           </span>
         </button>
         <button
