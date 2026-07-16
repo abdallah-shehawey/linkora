@@ -126,14 +126,14 @@ function LinkRow({ link }: { link: LinkItem }) {
               )}
             </div>
 
-            <div className="ml-auto flex items-center gap-1">
+            <div className="ml-auto flex shrink-0 items-center gap-2.5">
               <Switch
                 checked={link.active}
                 onChange={(v) => updateLink(link.id, { active: v })}
               />
               <button
                 onClick={() => removeLink(link.id)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-white/30 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white/30 transition-colors hover:bg-red-500/10 hover:text-red-400"
                 aria-label="Delete link"
               >
                 <Trash2 className="h-4 w-4" />
@@ -188,7 +188,7 @@ function Switch({
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={cn(
-        "relative h-6 w-10 rounded-full transition-colors",
+        "relative h-6 w-10 shrink-0 rounded-full transition-colors",
         checked ? "bg-brand-500" : "bg-white/12",
       )}
     >
