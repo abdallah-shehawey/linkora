@@ -28,6 +28,7 @@ interface EditorContext {
   addSocial: (platform: SocialPlatform) => void;
   updateSocial: (index: number, data: Partial<SocialLink>) => void;
   removeSocial: (index: number) => void;
+  setSocials: (socials: SocialLink[]) => void;
 }
 
 const Ctx = createContext<EditorContext | null>(null);
@@ -138,6 +139,10 @@ export function EditorProvider({
     }));
   }, []);
 
+  const setSocials = useCallback((socials: SocialLink[]) => {
+    setProfile((p) => ({ ...p, socials }));
+  }, []);
+
   return (
     <Ctx.Provider
       value={{
@@ -152,6 +157,7 @@ export function EditorProvider({
         addSocial,
         updateSocial,
         removeSocial,
+        setSocials,
       }}
     >
       {children}

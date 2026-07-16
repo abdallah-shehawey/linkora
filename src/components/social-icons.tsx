@@ -49,6 +49,10 @@ export function socialHref(platform: SocialPlatform, value: string): string {
  * Name shown next to the icon on the public page: the user-provided label
  * when present, otherwise the handle extracted from the URL, otherwise the
  * platform name.
+ *
+ * Facebook is special-cased: its URLs often contain numeric IDs or encoded
+ * characters instead of readable usernames, so we always prefer the label
+ * and fall back to the platform name.
  */
 export function socialDisplayName(s: SocialLink): string {
   const label = s.label?.trim();
@@ -57,6 +61,11 @@ export function socialDisplayName(s: SocialLink): string {
   const meta = SOCIALS[s.platform];
   const raw = s.url.trim();
   if (!raw) return meta.label;
+
+  // Facebook URLs rarely yield a clean, readable username — always show
+  // the user-provided label or fall back to "Facebook".
+  if (s.platform === "facebook") return meta.label;
+
   if (s.platform === "email") return raw.replace(/^mailto:/i, "");
 
   try {
