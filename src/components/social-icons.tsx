@@ -27,7 +27,7 @@ export const SOCIALS: Record<
   github: { label: "GitHub", Icon: FaGithub, placeholder: "github.com/you" },
   linkedin: { label: "LinkedIn", Icon: FaLinkedinIn, placeholder: "linkedin.com/in/you" },
   facebook: { label: "Facebook", Icon: FaFacebookF, placeholder: "facebook.com/you" },
-  whatsapp: { label: "WhatsApp", Icon: FaWhatsapp, placeholder: "wa.me/2010..." },
+  whatsapp: { label: "WhatsApp", Icon: FaWhatsapp, placeholder: "201012345678" },
   telegram: { label: "Telegram", Icon: FaTelegram, placeholder: "t.me/you" },
   spotify: { label: "Spotify", Icon: FaSpotify, placeholder: "open.spotify.com/..." },
   email: { label: "Email", Icon: FaEnvelope, placeholder: "you@mail.com", prefix: "mailto:" },
@@ -36,11 +36,38 @@ export const SOCIALS: Record<
 
 export const SOCIAL_PLATFORMS = Object.keys(SOCIALS) as SocialPlatform[];
 
+/**
+ * Extract a clean phone number from whatever the user typed.
+ * Handles raw numbers, wa.me links, api.whatsapp.com links, etc.
+ */
+export function extractWhatsAppNumber(raw: string): string {
+  const v = raw.trim();
+  // If it looks like a URL, pull the number from the path / query
+  if (/wa\.me|whatsapp\.com/i.test(v)) {
+    try {
+      const url = new URL(normaliseUrl(v));
+      // wa.me/<number> or api.whatsapp.com/send?phone=<number>
+      const fromPath = url.pathname.split("/").filter(Boolean).pop();
+      const fromQuery = url.searchParams.get("phone");
+      const candidate = fromQuery || fromPath || "";
+      return candidate.replace(/[^0-9+]/g, "");
+    } catch {
+      // fall through
+    }
+  }
+  // Strip everything except digits and leading +
+  return v.replace(/[^0-9+]/g, "");
+}
+
 /** Build the outbound href for a social entry. */
 export function socialHref(platform: SocialPlatform, value: string): string {
   const v = value.trim();
   if (platform === "email") {
     return v.startsWith("mailto:") ? v : `mailto:${v}`;
+  }
+  if (platform === "whatsapp") {
+    const num = extractWhatsAppNumber(v);
+    return num ? `https://wa.me/${num.replace(/^\+/, "")}` : "#";
   }
   return normaliseUrl(v);
 }
@@ -61,6 +88,12 @@ export function socialDisplayName(s: SocialLink): string {
   const meta = SOCIALS[s.platform];
   const raw = s.url.trim();
   if (!raw) return meta.label;
+
+  // WhatsApp: show the phone number (cleaned up).
+  if (s.platform === "whatsapp") {
+    const num = extractWhatsAppNumber(raw);
+    return num || meta.label;
+  }
 
   // Facebook URLs rarely yield a clean, readable username — always show
   // the user-provided label or fall back to "Facebook".

@@ -19,9 +19,10 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useEditor } from "./editor-context";
-import { SOCIALS, SOCIAL_PLATFORMS } from "@/components/social-icons";
+import { SOCIALS, SOCIAL_PLATFORMS, extractWhatsAppNumber } from "@/components/social-icons";
 import type { SocialLink, SocialPlatform } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 /** Each social row needs a stable ID for dnd-kit. We derive one from
  *  the platform name + its index so it stays unique even when the same
@@ -75,16 +76,35 @@ function SocialRow({
         <Input
           value={s.label ?? ""}
           onChange={(e) => updateSocial(index, { label: e.target.value })}
-          placeholder={`Account name (e.g. shown as "${meta.label}")`}
+          placeholder={
+            s.platform === "whatsapp"
+              ? "Display name (optional)"
+              : `Account name (e.g. shown as "${meta.label}")`
+          }
           className="h-8 border-0 bg-transparent px-1 text-sm focus:ring-0"
           spellCheck={false}
         />
         <Input
           value={s.url}
-          onChange={(e) => updateSocial(index, { url: e.target.value })}
+          onChange={(e) => {
+            let val = e.target.value;
+            // WhatsApp: if user pastes a wa.me / whatsapp.com link,
+            // auto-extract the number and warn them.
+            if (s.platform === "whatsapp" && /wa\.me|whatsapp\.com/i.test(val)) {
+              const num = extractWhatsAppNumber(val);
+              if (num) {
+                val = num;
+                toast.info("Just the phone number! We'll build the link for you.", {
+                  duration: 3000,
+                });
+              }
+            }
+            updateSocial(index, { url: val });
+          }}
           placeholder={meta.placeholder}
           className="h-8 border-0 bg-transparent px-1 text-xs text-white/60 focus:ring-0"
           autoCapitalize="none"
+          inputMode={s.platform === "whatsapp" ? "tel" : undefined}
           spellCheck={false}
         />
       </div>
