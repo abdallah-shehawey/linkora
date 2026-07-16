@@ -1,0 +1,43 @@
+rules_version = '2';
+
+// Linkora Firestore security rules.
+// Publish with the Firebase CLI (`firebase deploy --only firestore:rules`)
+// or paste into Firebase Console → Firestore → Rules.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Public profiles ──────────────────────────────────────
+    // Anyone can read a profile (that's the whole point of the page);
+    // only the authenticated owner may write it.
+    match /profiles/{uid} {
+      allow read: if true;
+      allow create, update, delete:
+        if request.auth != null && request.auth.uid == uid;
+    }
+
+    // ── Username reservations ─────────────────────────────────
+    // Public read so public pages can resolve a handle → uid.
+    // A user may only reserve/release a handle that points at their own uid.
+    match /usernames/{username} {
+      allow read: if true;
+      allow create:
+        if request.auth != null
+        && request.resource.data.uid == request.auth.uid;
+      allow delete:
+        if request.auth != null
+        && resource.data.uid == request.auth.uid;
+      allow update: if false;
+    }
+
+    // ── Analytics counters ────────────────────────────────────
+    // Readable by all; incrementable by anonymous visitors so page views
+    // and link clicks can be counted.
+    // NOTE: intentionally permissive for the MVP. Before production, move
+    // increments behind App Check or a server function to prevent abuse.
+    match /stats/{uid} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}

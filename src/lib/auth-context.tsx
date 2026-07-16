@@ -38,7 +38,8 @@ const AuthContext = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  // When Firebase isn't configured there is nothing to wait for.
+  const [loading, setLoading] = useState(isFirebaseConfigured);
 
   const loadProfile = useCallback(async (u: User | null) => {
     if (!u) {
@@ -53,10 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!isFirebaseConfigured) {
-      setLoading(false);
-      return;
-    }
+    if (!isFirebaseConfigured) return;
     const unsub = onAuthStateChanged(getFirebaseAuth(), async (u) => {
       setUser(u);
       await loadProfile(u);

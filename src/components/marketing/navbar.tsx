@@ -12,7 +12,6 @@ const NAV = [
   { href: "#features", label: "Features" },
   { href: "#themes", label: "Themes" },
   { href: "#compare", label: "Why Linkora" },
-  { href: "#pricing", label: "Pricing" },
 ];
 
 export function Navbar() {

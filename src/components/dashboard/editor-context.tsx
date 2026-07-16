@@ -62,11 +62,19 @@ export function EditorProvider({
     timer.current = setTimeout(async () => {
       setSaveState("saving");
       try {
-        const { uid, username, createdAt, ...rest } = profile;
-        void uid;
-        void username;
-        void createdAt;
-        await saveProfile(profile.uid, rest);
+        // Persist only editable fields — never uid/username/createdAt
+        // (username is owned by the reservation transaction).
+        await saveProfile(profile.uid, {
+          displayName: profile.displayName,
+          bio: profile.bio,
+          avatarUrl: profile.avatarUrl,
+          themeId: profile.themeId,
+          buttonStyle: profile.buttonStyle,
+          socials: profile.socials,
+          links: profile.links,
+          verified: profile.verified ?? false,
+          views: profile.views ?? 0,
+        });
         setSaveState("saved");
         void refreshProfile();
       } catch {

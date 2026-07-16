@@ -1,6 +1,15 @@
 import { getApps, getApp, initializeApp, type FirebaseApp } from "firebase/app";
-import { getAuth, type Auth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore, type Firestore } from "firebase/firestore";
+import {
+  getAuth,
+  connectAuthEmulator,
+  type Auth,
+  GoogleAuthProvider,
+} from "firebase/auth";
+import {
+  getFirestore,
+  connectFirestoreEmulator,
+  type Firestore,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -15,6 +24,13 @@ const firebaseConfig = {
 export const isFirebaseConfigured = Boolean(
   firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId,
 );
+
+/**
+ * Local-dev flag: when NEXT_PUBLIC_FIREBASE_EMULATOR=1, Auth + Firestore
+ * connect to the local Firebase Emulator Suite instead of production.
+ * Never set this on Vercel.
+ */
+const useEmulator = process.env.NEXT_PUBLIC_FIREBASE_EMULATOR === "1";
 
 let app: FirebaseApp | null = null;
 let authInstance: Auth | null = null;
@@ -33,12 +49,24 @@ function ensureApp(): FirebaseApp {
 }
 
 export function getFirebaseAuth(): Auth {
-  if (!authInstance) authInstance = getAuth(ensureApp());
+  if (!authInstance) {
+    authInstance = getAuth(ensureApp());
+    if (useEmulator) {
+      connectAuthEmulator(authInstance, "http://127.0.0.1:9099", {
+        disableWarnings: true,
+      });
+    }
+  }
   return authInstance;
 }
 
 export function getDb(): Firestore {
-  if (!dbInstance) dbInstance = getFirestore(ensureApp());
+  if (!dbInstance) {
+    dbInstance = getFirestore(ensureApp());
+    if (useEmulator) {
+      connectFirestoreEmulator(dbInstance, "127.0.0.1", 8080);
+    }
+  }
   return dbInstance;
 }
 

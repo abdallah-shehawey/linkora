@@ -22,7 +22,10 @@ export function OnboardingFlow() {
     slugifyUsername(params.get("u") ?? ""),
   );
   const [name, setName] = useState(user?.displayName ?? "");
-  const [status, setStatus] = useState<Status>("idle");
+  // Result of the last async availability check, keyed by the handle checked.
+  const [checked, setChecked] = useState<{ name: string; ok: boolean } | null>(
+    null,
+  );
   const [saving, setSaving] = useState(false);
 
   const valid = useMemo(
@@ -33,17 +36,26 @@ export function OnboardingFlow() {
     [username],
   );
 
+  // Status is derived: only the debounced check writes state.
+  const status: Status = !username
+    ? "idle"
+    : !valid
+      ? "invalid"
+      : checked?.name === username
+        ? checked.ok
+          ? "available"
+          : "taken"
+        : "checking";
+
   useEffect(() => {
-    if (!username) return setStatus("idle");
-    if (!valid) return setStatus("invalid");
-    setStatus("checking");
+    if (!username || !valid) return;
     let cancelled = false;
     const t = setTimeout(async () => {
       try {
         const ok = await isUsernameAvailable(username);
-        if (!cancelled) setStatus(ok ? "available" : "taken");
+        if (!cancelled) setChecked({ name: username, ok });
       } catch {
-        if (!cancelled) setStatus("idle");
+        /* stay in "checking"; a later edit retriggers the check */
       }
     }, 450);
     return () => {
@@ -69,7 +81,7 @@ export function OnboardingFlow() {
           ? "That handle was just taken — try another."
           : "Couldn't create your page. Try again.";
       toast.error(msg);
-      setStatus("taken");
+      setChecked({ name: username, ok: false });
       setSaving(false);
     }
   };

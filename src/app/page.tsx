@@ -8,7 +8,6 @@ import {
   Globe,
   Check,
   X,
-  ArrowRight,
   MousePointerClick,
   ShieldCheck,
 } from "lucide-react";
@@ -19,7 +18,6 @@ import { ThemeShowcase } from "@/components/marketing/theme-showcase";
 import { PhoneMockup } from "@/components/phone-mockup";
 import { ProfileView } from "@/components/profile-view";
 import { Logo } from "@/components/logo";
-import { ButtonLink } from "@/components/ui/button";
 import { DEMO_PROFILE } from "@/lib/demo";
 
 const FEATURES = [
@@ -50,8 +48,8 @@ const FEATURES = [
   },
   {
     icon: ShieldCheck,
-    title: "Yours, forever free",
-    body: "The core is free with no watermarks holding your page hostage. Upgrade only if you want more.",
+    title: "100% free, forever",
+    body: "Every feature, every theme, all your analytics — free. No paid tiers, no watermarks, no surprises.",
   },
 ];
 
@@ -63,8 +61,9 @@ const STEPS = [
 
 const COMPARE = [
   { label: "Modern, designer-made themes", us: true, them: false },
-  { label: "Per-link click analytics (free)", us: true, them: false },
-  { label: "No forced watermark on free plan", us: true, them: false },
+  { label: "Per-link click analytics", us: true, them: false },
+  { label: "Everything free — no paid tiers", us: true, them: false },
+  { label: "No forced watermark", us: true, them: false },
   { label: "Custom button shapes & highlights", us: true, them: true },
   { label: "Drag-and-drop reordering", us: true, them: true },
   { label: "Lightning-fast page loads", us: true, them: false },
@@ -259,49 +258,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ============================ PRICING ============================ */}
-      <section id="pricing" className="relative py-24">
-        <div className="mx-auto max-w-4xl px-4">
-          <SectionHeading
-            eyebrow="Pricing"
-            title="Start free. Upgrade when you're ready."
-            subtitle="No watermark tax. No paywall on the basics."
-          />
-          <div className="mt-12 grid gap-6 md:grid-cols-2">
-            <PriceCard
-              name="Free"
-              price="$0"
-              tagline="Everything you need to launch."
-              cta="Get started"
-              href="/signup"
-              features={[
-                "Your linkora.app handle",
-                "Unlimited links",
-                "All 10 themes",
-                "Basic click analytics",
-                "No watermark",
-              ]}
-            />
-            <PriceCard
-              featured
-              name="Pro"
-              price="$5"
-              period="/mo"
-              tagline="For creators who mean business."
-              cta="Go Pro"
-              href="/signup"
-              features={[
-                "Everything in Free",
-                "Advanced analytics & CSV export",
-                "Custom domain",
-                "Scheduled & featured links",
-                "Priority support",
-              ]}
-            />
-          </div>
-        </div>
-      </section>
-
       {/* ============================ CTA ============================ */}
       <section className="relative overflow-hidden py-24">
         <div className="mx-auto max-w-5xl px-4">
@@ -330,7 +286,7 @@ export default function Home() {
           <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/50">
             <a href="#features" className="hover:text-white">Features</a>
             <a href="#themes" className="hover:text-white">Themes</a>
-            <a href="#pricing" className="hover:text-white">Pricing</a>
+            <a href="#compare" className="hover:text-white">Why Linkora</a>
             <Link href="/login" className="hover:text-white">Log in</Link>
           </nav>
           <p className="text-sm text-white/35">
@@ -378,60 +334,3 @@ function Badge({ ok }: { ok: boolean }) {
   );
 }
 
-function PriceCard({
-  name,
-  price,
-  period,
-  tagline,
-  features,
-  cta,
-  href,
-  featured,
-}: {
-  name: string;
-  price: string;
-  period?: string;
-  tagline: string;
-  features: string[];
-  cta: string;
-  href: string;
-  featured?: boolean;
-}) {
-  return (
-    <div
-      className={`relative flex flex-col rounded-3xl border p-8 ${
-        featured
-          ? "border-brand-400/40 bg-brand-600/[0.06] glow"
-          : "border-white/10 bg-white/[0.02]"
-      }`}
-    >
-      {featured && (
-        <span className="brand-gradient absolute -top-3 left-8 rounded-full px-3 py-1 text-xs font-semibold text-white">
-          Most popular
-        </span>
-      )}
-      <h3 className="text-lg font-semibold text-white">{name}</h3>
-      <p className="mt-1 text-sm text-white/50">{tagline}</p>
-      <div className="mt-5 flex items-end gap-1">
-        <span className="text-4xl font-bold text-white">{price}</span>
-        {period && <span className="pb-1 text-white/40">{period}</span>}
-      </div>
-      <ul className="mt-6 flex flex-1 flex-col gap-3">
-        {features.map((f) => (
-          <li key={f} className="flex items-center gap-2.5 text-sm text-white/70">
-            <Check className="h-4 w-4 shrink-0 text-brand-300" />
-            {f}
-          </li>
-        ))}
-      </ul>
-      <ButtonLink
-        href={href}
-        variant={featured ? "primary" : "secondary"}
-        className="mt-8 w-full"
-      >
-        {cta}
-        <ArrowRight className="h-4 w-4" />
-      </ButtonLink>
-    </div>
-  );
-}

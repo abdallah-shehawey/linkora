@@ -59,10 +59,9 @@ export function ProfileView({
         <div
           className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full ring-2 ring-offset-2"
           style={{
-            // @ts-expect-error CSS var for ring color
             "--tw-ring-color": "var(--ring)",
             "--tw-ring-offset-color": "transparent",
-          }}
+          } as CSSProperties}
         >
           {profile.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element

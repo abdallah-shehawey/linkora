@@ -24,7 +24,7 @@ export function SocialsEditor() {
             className="flex items-center gap-2 rounded-2xl border border-white/8 bg-white/[0.03] p-2.5"
           >
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/6 text-white/80">
-              <Icon className="h-4.5 w-4.5" />
+              <Icon className="h-[18px] w-[18px]" />
             </span>
             <Input
               value={s.url}
