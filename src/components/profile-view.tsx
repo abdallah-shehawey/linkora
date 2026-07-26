@@ -202,15 +202,17 @@ export function ProfileView({
           )}
         </div>
 
-        {/* Footer badge */}
+        {/* Footer CTA — a real button, deliberately brand-styled so it reads
+            as "Linkora" rather than another theme-colored link. */}
         <a
           href={preview ? undefined : "/"}
           onClick={(e) => preview && e.preventDefault()}
-          className="mt-auto flex items-center gap-1.5 pt-10 text-xs font-medium opacity-70 transition-opacity hover:opacity-100"
-          style={{ color: "var(--muted)" }}
+          className="group mt-auto pt-10"
         >
-          <LogoMark className="h-5 w-5 rounded-md" />
-          Join @{profile.username} on Linkora
+          <span className="brand-gradient inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-brand-600/30 transition-transform duration-200 group-hover:-translate-y-0.5">
+            <LogoMark bare className="h-4 w-4" />
+            Join @{profile.username} on Linkora
+          </span>
         </a>
       </div>
     </div>
