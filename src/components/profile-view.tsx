@@ -37,7 +37,7 @@ export function ProfileView({
   return (
     <div
       className={cn(
-        "relative flex min-h-full w-full flex-col items-center overflow-hidden px-6 pt-16 pb-10",
+        "@container relative flex min-h-full w-full flex-col items-center overflow-hidden px-6 pt-16 pb-10",
         className,
       )}
       style={
@@ -54,7 +54,7 @@ export function ProfileView({
         style={{ background: "var(--ring)" }}
       />
 
-      <div className="relative z-10 flex w-full max-w-[520px] flex-1 flex-col items-center">
+      <div className="relative z-10 flex w-full max-w-[520px] flex-1 flex-col items-center @min-[680px]:max-w-[760px]">
         {/* Avatar */}
         <div
           className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full ring-2 ring-offset-2"
@@ -103,7 +103,7 @@ export function ProfileView({
 
         {/* Socials — vertical rows: icon + account name */}
         {profile.socials.length > 0 && (
-          <div className="mt-6 flex w-full flex-col gap-2.5">
+          <div className="mt-6 grid w-full grid-cols-1 gap-2.5 @min-[680px]:grid-cols-2">
             {profile.socials.map((s, i) => {
               const meta = SOCIALS[s.platform];
               if (!meta || !s.url) return null;
@@ -154,7 +154,7 @@ export function ProfileView({
         )}
 
         {/* Links */}
-        <div className="mt-7 flex w-full flex-col gap-3.5">
+        <div className="mt-7 grid w-full grid-cols-1 gap-3.5 @min-[680px]:grid-cols-2">
           {links.map((link) => (
             <a
               key={link.id}
@@ -194,7 +194,7 @@ export function ProfileView({
 
           {links.length === 0 && (
             <div
-              className="rounded-2xl border border-dashed py-10 text-center text-sm"
+              className="col-span-full rounded-2xl border border-dashed py-10 text-center text-sm"
               style={{ borderColor: "var(--btn-border)", color: "var(--muted)" }}
             >
               No links yet.
@@ -210,7 +210,7 @@ export function ProfileView({
           style={{ color: "var(--muted)" }}
         >
           <LogoMark className="h-5 w-5 rounded-md" />
-          Made with Linkora
+          Join @{profile.username} on Linkora
         </a>
       </div>
     </div>
