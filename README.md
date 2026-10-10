@@ -148,3 +148,27 @@ src/
 ```
 
 See [`KNOWN_GAPS.md`](./KNOWN_GAPS.md) for what's intentionally left for a v2.
+
+## GitHub Container Registry
+
+A tested Linux amd64 image is published to [GitHub Packages](https://github.com/abdallah-shehawey/linkora/pkgs/container/linkora) on each push to `main`. `latest` follows `main`; `sha-<commit>` identifies an exact build. Version tags (`v*`) also publish a versioned image.
+
+```sh
+docker run --rm -p 8080:3000 ghcr.io/abdallah-shehawey/linkora:latest
+```
+
+Open http://localhost:8080. On first publication GitHub makes packages private; the owner can make the package public in its package settings. Private images require a GitHub token with `read:packages`.
+
+Public client configuration is compiled into the image. The publish workflow reads these GitHub Actions repository **variables**:
+
+- `NEXT_PUBLIC_FIREBASE_API_KEY`
+- `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+- `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+- `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
+- `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+- `NEXT_PUBLIC_FIREBASE_APP_ID`
+- `NEXT_PUBLIC_SITE_URL`
+
+To use your own backend, build from source and supply these values with `docker build --build-arg NAME=value ... -t linkora .`. Server-only secrets belong in `docker run --env-file /path/to/runtime.env ...`, never build arguments. Local `.env` files and private keys are excluded from the build context.
+
+Without Firebase variables the image shows the existing setup state. Configure your Firebase project before using accounts or saved links, and authorize your hosting domain in Firebase Authentication.
